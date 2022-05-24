@@ -1,0 +1,2 @@
+(()=>{"use strict";document.getElementById("id-gpu-check").innerHTML=(()=>{let e="Your current browser supports WebGPU!";navigator.gpu||(e="Your current browser does not support WebGPU!.");const t=document.getElementById("canvas-webgpu");if(t){const n=document.getElementsByClassName("item2")[0];function o(){t.width=n.offsetWidth,t.height=n.offsetHeight}t.width=n.offsetWidth,t.height=n.offsetHeight,window.addEventListener("resize",o)}return e})()})();
+//# sourceMappingURL=main.bundle.js.map
