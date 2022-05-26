@@ -5,6 +5,7 @@ head!.innerHTML=CheckWebGPU();
 
 const CreateTriangle = async() => {
     console.log("called")
+    
     const canvas: HTMLCanvasElement | null = document.getElementById("canvas-webgpu") as HTMLCanvasElement;
     const adapter: GPUAdapter | null = await navigator.gpu?.requestAdapter();
     const device: GPUDevice = await adapter?.requestDevice() as GPUDevice;
@@ -50,7 +51,7 @@ const renderPass = commandEncoder.beginRenderPass({
 
 renderPass.setPipeline(pipeline);
 renderPass.draw(3,1,0,0);
-renderPass.end;
+renderPass.end();
 
 device.queue.submit([commandEncoder.finish()]);
 }
