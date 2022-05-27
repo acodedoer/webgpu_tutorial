@@ -5,10 +5,24 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WebGPU Tutorial</title>
+
+    <style>
+        body{
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        canvas{
+            max-height: 80vh;
+        }
+    </style>
 </head>
 <body>
-    <h1>Does your browser support WebGPU?</h1>
-    <h2 id="id-gpu-check"></h2>
+    <header>
+        <h1>Does your browser support WebGPU?</h1>
+        <h2 id="id-gpu-check"></h2>
+    </header>
     <canvas id="canvas-webgpu"></canvas>
     <script src="main.bundle.js"></script>
 </body>

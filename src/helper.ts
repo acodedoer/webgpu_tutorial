@@ -3,18 +3,42 @@ export const CheckWebGPU = () => {
     if (!navigator.gpu) {
         result = `Your current browser does not support WebGPU!.`;
     } 
-
-    // const canvas = <HTMLCanvasElement>document.getElementById('canvas-webgpu');
-    // if(canvas){
-    //     const div = <HTMLDivElement>document.getElementsByClassName('item2')[0];
-    //     canvas.width  = div.offsetWidth;
-    //     canvas.height = div.offsetHeight;
-
-    //     function windowResize() {
-    //         canvas.width  = div.offsetWidth;
-    //         canvas.height = div.offsetHeight;
-    //     };
-    //     window.addEventListener('resize', windowResize);
-    // }
     return result;
+}
+
+export const InitGPU = async () => {
+    const status = CheckWebGPU();
+    if(status.includes('Your current browser does not support WebGPU!')){
+        throw('No WebGPU Support!');
+    }
+
+    const canvas = document.getElementById("canvas-webgpu") as HTMLCanvasElement;
+    const adapter = await navigator.gpu?.requestAdapter();
+    const device = await adapter?.requestDevice() as GPUDevice;
+    const context = canvas.getContext("webgpu") as unknown as GPUCanvasContext;
+
+    const devicePixelRatio = window.devicePixelRatio || 1;
+    const size = [
+        canvas.clientWidth *devicePixelRatio,
+        canvas.clientHeight *devicePixelRatio
+    ];
+    const format = await navigator.gpu.getPreferredCanvasFormat();
+
+    context.configure({
+        device,format
+    })
+
+    return {device, canvas, format, context};
+}
+
+export const CreateGPUBuffer = (device:GPUDevice, data: Float32Array, usageFlag:GPUBufferUsageFlags = GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST) => {
+     const buffer = device.createBuffer({
+         size: data.byteLength,
+         usage:usageFlag,
+         mappedAtCreation: true
+     });
+
+     new Float32Array(buffer.getMappedRange()).set(data);
+     buffer.unmap();
+     return buffer;
 }
