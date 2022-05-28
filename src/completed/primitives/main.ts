@@ -1,4 +1,3 @@
-import { createPrinter } from "../node_modules/typescript/lib/typescript";
 import { CheckWebGPU, InitGPU, CreateGPUBuffer } from "./helper";
 import shader from './shader.wgsl'
 const head = document.getElementById("id-gpu-check");
