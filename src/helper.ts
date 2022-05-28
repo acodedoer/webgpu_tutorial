@@ -1,5 +1,5 @@
 export const CheckWebGPU = () => {
-    let result = 'Your current browser supports WebGPU!';
+    let result = '';
     if (!navigator.gpu) {
         result = `Your current browser does not support WebGPU!.`;
     } 
