@@ -1,5 +1,41 @@
 import {vec3, mat4} from "gl-matrix";
 
+export const ReDraw = (draw:any, translation:vec3 = vec3.fromValues(0,0,0),rotation:vec3 = vec3.fromValues(0,0,0),scale:vec3 = vec3.fromValues(1,1,1), transform:string) => {
+    function step() {
+        if(transform ==="rotation"){
+            rotation[0] += 0.01;
+            rotation[1] += 0.01;
+            rotation[2] += 0.01;
+            translation=[0,0,0];
+            scale=[1,1,1];
+        }
+        else if(transform ==="translate"){
+            translation[0] += 0.01;
+            if(translation[0]>3){
+                translation[0] = -3;
+            }
+            rotation=[0,0,0];
+            scale=[1,1,1];
+        }
+        else if(transform ==="scale"){
+            scale[0] += 0.01;
+            scale[1] += 0.01;
+            scale[2] += 0.01;
+            if(scale[0]>2){
+                scale[0] =1;
+                scale[1] =1;
+                scale[2] =1;
+            }
+            rotation=[0,0,0];
+            translation=[0,0,0];
+        }
+        
+        draw();
+        requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+}
+
 export const CheckWebGPU = () => {
     let result = '';
     if (!navigator.gpu) {
@@ -24,10 +60,12 @@ export const InitGPU = async (id="canvas-webgpu") => {
         canvas.clientWidth *devicePixelRatio,
         canvas.clientHeight *devicePixelRatio
     ];
+    canvas.width = size[0];
+    canvas.height = size[1];
     const format = await navigator.gpu.getPreferredCanvasFormat();
-
+    
     context.configure({
-        device,format
+        alphaMode:"premultiplied",device,format, 
     })
 
     return {device, canvas, format, context};
@@ -110,12 +148,12 @@ export const CubeData = () =>{
 
     const colors = new Float32Array([
         // front - blue
-        1, 0, 1,
-        1, 0, 1,
-        1, 0, 1,
-        1, 0, 1,
-        1, 0, 1,
-        1, 0, 1,
+        0, 0, 1,
+        0, 0, 1,
+        0, 0, 1,
+        0, 0, 1,
+        0, 0, 1,
+        0, 0, 1,
 
         // right - red
         1, 0, 0,

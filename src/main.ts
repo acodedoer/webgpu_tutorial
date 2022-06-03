@@ -1,6 +1,8 @@
 import {CreateSquareWithSingleBuffer} from "./examples/05_square_with_single_buffer/05"
 import {CreateSquareWithIndexBuffer} from "./examples/06_square_with_index_buffer/06"
 import {CreateCubeWithDistinctFaceColors} from "./examples/07_cube_with_distinct_face_colors/07"
+import {CreateCubeWithAnimation} from "./examples/08_cube_with_animation_and_camera_control/08"
+
 /////////////////////////   Example 07 Begins   ///////////////////////////////
 // const CreateTrianglePrimitive = async (primitiveType = 'triangle-list') => {
 //     const gpu = await InitGPU();
@@ -165,5 +167,16 @@ switch(project){
         window.addEventListener('resize', function(){
             CreateCubeWithDistinctFaceColors();
         });
+        break;
+    case "08":
+        const selector = document.getElementById("select-transform") as HTMLSelectElement || document.createElement("select") as HTMLSelectElement;
+        const transform = selector.value;
+
+        CreateCubeWithAnimation(transform);
+        window.addEventListener('resize', function(){
+            CreateCubeWithAnimation(transform);
+        });
+
+        selector.addEventListener(("change"),()=>CreateCubeWithAnimation(selector.value))
         break;
 }

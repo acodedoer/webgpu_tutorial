@@ -1,12 +1,12 @@
-import { CheckWebGPU, InitGPU, CreateGPUBuffer, CreateGPUIndexBuffer, GenerateCubeVertices, CreateTransforms, CreateViewProjection, CubeData } from "../../helper";
-import shader from './07.wgsl'
-import { mat4 } from "gl-matrix";
+import { CheckWebGPU, ReDraw,InitGPU, CreateGPUBuffer, CreateGPUIndexBuffer, GenerateCubeVertices, CreateTransforms, CreateViewProjection, CubeData } from "../../helper";
+import shader from './08.wgsl'
+import { mat4, vec3 } from "gl-matrix";
 const head = document.getElementById("id-gpu-check");
 head!.innerHTML=CheckWebGPU();
 
 
-export const CreateCubeWithDistinctFaceColors = async() => {
-    const gpu = await InitGPU("canvas-webgpu-07");
+export const CreateCubeWithAnimation = async(transform: string) => {
+    const gpu = await InitGPU("canvas-webgpu-08");
     const device = gpu.device;
 
     const cubeData = CubeData();
@@ -76,9 +76,11 @@ export const CreateCubeWithDistinctFaceColors = async() => {
     const modelMatrix = mat4.create();
     const mvpMatrix = mat4.create();
     let vpMatrix = mat4.create();
-    const vp = CreateViewProjection(gpu.canvas.width/gpu.canvas.height);
+    const vp = CreateViewProjection(gpu.canvas.width/gpu.canvas.height,[0,20,10]);
     vpMatrix = vp.viewProjectionMatrix;
-
+    let rotation = vec3.fromValues(0, 0, 0);   
+    let scale = vec3.fromValues(1,1,1);   
+    let translation = vec3.fromValues(0, 0, 0);   
 
     const uniformBuffer = device.createBuffer({
         size: 64,
@@ -102,21 +104,14 @@ export const CreateCubeWithDistinctFaceColors = async() => {
 
 
     
-    const textureView = gpu.context.getCurrentTexture().createView();
-    const depthTexture = device.createTexture({
+    let textureView = gpu.context.getCurrentTexture().createView();
+    let depthTexture = device.createTexture({
         size: [gpu.canvas.width, gpu.canvas.height, 1],
         format: "depth24plus",
         usage: GPUTextureUsage.RENDER_ATTACHMENT,
     });
 
-    CreateTransforms(modelMatrix);
-    mat4.multiply(mvpMatrix, vpMatrix, modelMatrix);
-    device.queue.writeBuffer(uniformBuffer, 0, mvpMatrix as ArrayBuffer);
-
-    
-    const commandEncoder = device.createCommandEncoder();
-
-    const renderPass = commandEncoder.beginRenderPass({
+    const renderPassDescription = {
         colorAttachments: [{
             view:textureView,
             clearValue:{r:0.2, g:0.4, b:0.2, a:1.0},
@@ -132,14 +127,26 @@ export const CreateCubeWithDistinctFaceColors = async() => {
             depthStoreOp: "store",
             depthReadOnly: false,
         }
-        
-    })
+    };
 
-    renderPass.setPipeline(pipeline);
-    renderPass.setVertexBuffer(0, vertexBuffer);
-    renderPass.setVertexBuffer(1,colorBuffer);
-    renderPass.setBindGroup(0, uniformBindGroup);
-    renderPass.draw(numberOfVertices);
-    renderPass.end();
-    device.queue.submit([commandEncoder.finish()]);
+    const draw =()=>{
+              
+        CreateTransforms(modelMatrix,translation,rotation,scale);
+        mat4.multiply(mvpMatrix, vpMatrix, modelMatrix);
+        device.queue.writeBuffer(uniformBuffer, 0, mvpMatrix as ArrayBuffer);
+        textureView = gpu.context.getCurrentTexture().createView();
+        renderPassDescription.colorAttachments[0].view = textureView;
+
+        const commandEncoder = device.createCommandEncoder();
+        const renderPass = commandEncoder.beginRenderPass(renderPassDescription as GPURenderPassDescriptor);
+        renderPass.setPipeline(pipeline);
+        renderPass.setVertexBuffer(0, vertexBuffer);
+        renderPass.setVertexBuffer(1,colorBuffer);
+        renderPass.setBindGroup(0, uniformBindGroup);
+        renderPass.draw(numberOfVertices);
+        renderPass.end();
+        device.queue.submit([commandEncoder.finish()]);
+    }
+
+    ReDraw(draw,translation,rotation,scale,transform);
 }
