@@ -2,6 +2,7 @@ import {CreateSquareWithSingleBuffer} from "./examples/05_square_with_single_buf
 import {CreateSquareWithIndexBuffer} from "./examples/06_square_with_index_buffer/06"
 import {CreateCubeWithDistinctFaceColors} from "./examples/07_cube_with_distinct_face_colors/07"
 import {CreateCubeWithAnimation} from "./examples/08_cube_with_animation_and_camera_control/08"
+import {CreateCubeWithDistinctVertexColors} from "./examples/09_cube_with_distinct_vertex_colors/09"
 
 /////////////////////////   Example 07 Begins   ///////////////////////////////
 // const CreateTrianglePrimitive = async (primitiveType = 'triangle-list') => {
@@ -169,14 +170,25 @@ switch(project){
         });
         break;
     case "08":
-        const selector = document.getElementById("select-transform") as HTMLSelectElement || document.createElement("select") as HTMLSelectElement;
-        const transform = selector.value;
+        let selector8 = document.getElementById("select-transform") as HTMLSelectElement || document.createElement("select") as HTMLSelectElement;
+        let transform8 = selector8.value;
 
-        CreateCubeWithAnimation(transform);
+        CreateCubeWithAnimation(transform8);
         window.addEventListener('resize', function(){
-            CreateCubeWithAnimation(transform);
+            CreateCubeWithAnimation(transform8);
         });
 
-        selector.addEventListener(("change"),()=>CreateCubeWithAnimation(selector.value))
+        selector8.addEventListener(("change"),()=>CreateCubeWithAnimation(selector8.value))
+        break;
+    case "09":
+        let selector9= document.getElementById("select-transform") as HTMLSelectElement || document.createElement("select") as HTMLSelectElement;
+        let transform9= selector9.value;
+
+        CreateCubeWithDistinctVertexColors(transform9);
+        window.addEventListener('resize', function(){
+            CreateCubeWithDistinctVertexColors(transform9);
+        });
+
+        selector9.addEventListener(("change"),()=>CreateCubeWithDistinctVertexColors(selector9.value))
         break;
 }
